@@ -1,6 +1,6 @@
 #' Renames longitudinal Cross-year Individual variables and saves in long format
-#' @description Renames all repeated variables in the Cross-year Individual file so that matching variables across waves have the same name, and transforms the resulting dataset into long format. The longitudinal file does not include rows for respondents who were missing in a given wave, and cross-sectional variables are marked as NA during waves when they were not asked. In addition, the resulting file adds two variables for ease of use: "Year" and "fam_id_68". 
-#' 
+#' @description Renames all repeated variables in the Cross-year Individual file so that matching variables across waves have the same name, and transforms the resulting dataset into long format. The longitudinal file does not include rows for respondents who were missing in a given wave, and cross-sectional variables are marked as NA during waves when they were not asked. In addition, the resulting file adds two variables for ease of use: "Year" and "fam_id_68".
+#'
 #' This function may require up to 8gb of RAM, and will likely throw "cannot allocate memory" errors to users with less RAM on their computer. Users with memory issues should implement the "only_long_vars" or "cust_vars" options.
 #'
 #' @param in_direc Directory of PSID Cross-year Individual file .rds file
@@ -9,9 +9,9 @@
 #' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "fam_id_68", and "Year"
 #' @keywords PSID
 #' @export
-#' @examples 
+#' @examples
 #' rename_ind_vars(
-#'    only_long_vars=TRUE, 
+#'    only_long_vars=TRUE,
 #'    in_direc=system.file("extdata","rds_dir", package = "easyPSID"),
 #'    out_direc=tempdir()
 #' )
@@ -58,7 +58,7 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
             cust_vars<-c(cust_vars,"ER30001")
           }
           indcols<-sapply(cust_vars,function(x) which(index == x,arr.ind = T)[2])
-          index<-index[,indcols]  
+          index<-index[,indcols]
         }else if(only_long_vars==T){
           index<-index[,cross==0]
         }
@@ -97,7 +97,7 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
             }else if(only_long_vars==T){
               early_name2<-apply(index,2,function(x) x[x!=""][1])
             }else{
-              early_name2<-early_name[order(early_name)]  
+              early_name2<-early_name[order(early_name)]
             }
             names(ind_longdf)<-early_name2
         #b) Bring back variable descriptions
@@ -116,8 +116,4 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
           saveRDS(ind_longdf,file=paste(out_direc,"/",temp_file2," - Long Format.rds",sep=""))
           message(percent(1))
 }
-
-
-
-
 

@@ -6,7 +6,6 @@
 #' @export
 #' @examples find_name(variable="V1244",var_year=FALSE)
 
-
 find_name<-function(variable,var_year=TRUE){
     #1) Make sure variable is in character format
         variable<-as.character(variable)
