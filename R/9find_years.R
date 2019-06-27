@@ -6,6 +6,7 @@
 #' @export
 #' @examples find_years(variable="V3",var_names=FALSE)
 
+
 find_years<-function(variable,var_names=TRUE){
     #1) Make sure variable is in character format
         variable<-as.character(variable)
@@ -29,3 +30,4 @@ find_years<-function(variable,var_names=TRUE){
             }
             return(df[,1])
 }
+  

@@ -5,7 +5,7 @@
 #' @keywords PSID
 #' @export
 #' @importFrom utils object.size unzip
-#' @examples 
+#' @examples
 #' unzip_all_files(
 #'     in_direc=system.file("extdata","zip_dir", package = "easyPSID"),
 #'     out_direc="tempdir()"
@@ -21,7 +21,7 @@ unzip_all_files<-function(in_direc,out_direc){
         dir.create(out_direc,showWarnings = F)
         for(i in 1:length(zip_files)){
           unzip(zip_files[i],exdir=out_direc)
-        }    
+        }
     #4) Indicate that files are unzip_filesped
         message("Files Unzipped")
 }
