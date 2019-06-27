@@ -4,10 +4,10 @@
 #' @param out_direc Directory for renamed PSID .rds files to be saves to. Warning: If no directory specified, this function will overwrite the Family Files in the current directory.
 #' @keywords PSID
 #' @export
-#' @examples 
+#' @examples
 #' rename_fam_vars(
 #'     in_direc=system.file("extdata","rds_dir", package = "easyPSID"),
-#'     out_direc="tempdir()"
+#'     out_direc=tempdir()
 #' )
 
 rename_fam_vars<-function(in_direc,out_direc){

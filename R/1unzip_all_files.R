@@ -8,7 +8,7 @@
 #' @examples
 #' unzip_all_files(
 #'     in_direc=system.file("extdata","zip_dir", package = "easyPSID"),
-#'     out_direc="tempdir()"
+#'     out_direc=tempdir()
 #' }
 
 unzip_all_files<-function(in_direc,out_direc){

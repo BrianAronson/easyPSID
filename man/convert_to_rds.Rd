@@ -17,7 +17,7 @@ Converts all PSID fixed width format .txt files in a selected directory into .rd
 \examples{
 convert_to_rds(
     in_direc=system.file("extdata","unzip_dir", package = "easyPSID"),
-    out_direc="tempdir()"
+    out_direc=tempdir()
 )
 }
 \keyword{PSID}

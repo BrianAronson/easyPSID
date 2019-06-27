@@ -17,7 +17,7 @@ Renames all longitudinal variables in every PSID Family File of a given director
 \examples{
 rename_fam_vars(
     in_direc=system.file("extdata","rds_dir", package = "easyPSID"),
-    out_direc="tempdir()"
+    out_direc=tempdir()
 )
 }
 \keyword{PSID}
