@@ -4,7 +4,7 @@
 
 The easyPSID package is designed to simplify the task of reading the Panel Study of Income Dynamics (PSID) into R and preparing the data for analysis. 
 
-Although the PSID is one of the most comprehensive longitudinal datasets for examining health and life course patterns among American families, preparing the PSID for analysis can be a difficult task. The PSID comes with no scripts for being read into R, and every wave of each PSID longitudinal variable has a unique name. For example, variables in the 1968 PSID Family File are named “V1” through “V440” whereas variables within the 1969 PSID Family File are named “V441” through “V1017,” even though of the 1969 Family File variables match those in the 1968 Family File. These aspects of the PSID can pose difficulties for R users who want to conduct longitudinal analyses in the PSID. Fortunately, the easyPSID package is designed to make working with the PSID as easy as possible.
+Although the PSID is one of the most comprehensive longitudinal datasets for examining health and life course patterns among American families, preparing the PSID for analysis can be a difficult task. The PSID comes with no scripts for being read into R, and every wave of each PSID longitudinal variable has a unique name. For example, variables in the 1968 PSID Family File are named “V1” through “V440” whereas variables within the 1969 PSID Family File are named “V441” through “V1017,” even though the 1969 Family File variables match those in the 1968 Family File. These aspects of the PSID can pose difficulties for R users who want to conduct longitudinal analyses in the PSID. Fortunately, the easyPSID package is designed to make working with the PSID as easy as possible.
 
 ## Example
 
