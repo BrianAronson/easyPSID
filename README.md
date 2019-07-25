@@ -36,7 +36,7 @@ However, prior to working with the easyPSID package, users will need to have alr
 
 ##Function Overview
 
-More detailed vignettes for this package are in development, but below is a brief outline of each functions in this package:
+More detailed vignettes for this package are in development, but below is a brief outline of each function in this package:
 
 - **unzip\_all\_files**: Unzips all files in the supplie directory.
 - **convert\_to\_rds**: Read PSID fixed width files into R and saves output in .rds format.
