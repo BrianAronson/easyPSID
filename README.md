@@ -10,6 +10,13 @@ Although the PSID is one of the most comprehensive longitudinal datasets for exa
 
 After users have downloaded several waves of the PSID Packaged Data Family Files from https://simba.isr.umich.edu/, a common first use of the easyPSID package is to unzip each wave of the family files, convert them to .rds format, rename all longitudinal variables to consistent names across years, and save these resulting renamed datasets to .rds format with the following code (after amending for directory names). For example:
 
+    #Download several PSID from https://simba.isr.umich.edu/; 
+    #The family files will typically have a naming structure 
+    #like "fam1968.zip", "fam1969.zip", etc. and the individual
+    #cross section will be named something like "ind2015er.zip".
+    #Now edit the below directories as required and run the 
+    #following in R:
+
     library(easyPSID)
     unzip_all_files(
         in_direc="C:/PSID/Zip Files",
@@ -24,22 +31,16 @@ After users have downloaded several waves of the PSID Packaged Data Family Files
         out_direc="C:/PSID/renamed Files",
     )
 
-If users desire all of the PSID .zip files, unzipped files, and .rds files to be in the same directory, this code can be simplified to just:
-
-    library(easyPSID)
-    setwd("C:/PSID/Zip Files")
-    unzip_all_files()
-    convert_to_rds()
-    rename_fam_vars()
 
 ##Installation
 
-Installing this package can be done with the following two lines:
+This package can be directly installed via CRAN with:
+    install.packages("easyPSID")
+    
+Alternatively, newest versions of this package can be installed with:
+    devtools::install_github("BrianAronson/easyPSID")
 
-    library(devtools)
-    install_github("BrianAronson/easyPSID")
-
-However, prior to working with the easyPSID package, users will need to have already downloaded Packaged PSID data for the years that they wish to work with from https://simba.isr.umich.edu/. PSID's packaged data can only be accessed by loading this URL and navigating through the following tabs: Data-    Packaged Data-    Main and Supplemental Studies. 
+However, prior to working with the easyPSID package, users will need to have already downloaded Packaged PSID data for the years that they wish to work with from https://simba.isr.umich.edu/. PSID's packaged data can only be accessed by loading this URL and navigating through the following tabs: Data=> Packaged Data=> Main and Supplemental Studies. 
 
 ##Function Overview
 
