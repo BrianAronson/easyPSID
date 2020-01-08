@@ -40,7 +40,7 @@ However, prior to working with the easyPSID package, users will need to have alr
 
 More detailed vignettes for this package are in development, but below is a brief outline of each function in this package:
 
-- **unzip\_all\_files**: Unzips all files in the supplie directory.
+- **unzip\_all\_files**: Unzips all files in the supplied directory.
 - **convert\_to\_rds**: Read PSID fixed width files into R and saves output in .rds format.
 - **rename\_fam\_vars**: Renames all variables in longitudinal family files to their names when they were first available in the dataset.
 - **rename\_ind\_vars**: Renames all variables in longitudinal family files to their names when they were first available in the dataset.
