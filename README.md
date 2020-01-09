@@ -24,17 +24,11 @@ After users have downloaded several waves of the PSID Packaged Data Family Files
         out_direc="C:/PSID/renamed Files",
     )
 
-## Installation
+## Usage
 
-This package can be directly installed via CRAN with:
+This package can be directly installed via CRAN with `install.packages("easyPSID")`. Alternatively, newest versions of this package can be installed with `devtools::install_github("BrianAronson/easyPSID")`
 
-    install.packages("easyPSID")
-    
-Alternatively, newest versions of this package can be installed with:
-
-    devtools::install_github("BrianAronson/easyPSID")
-
-However, prior to working with the easyPSID package, users will need to have already downloaded packaged PSID data for the years that they wish to work with from https://simba.isr.umich.edu/. PSID's packaged data can only be accessed by loading this URL and navigating through the following tabs: Data=> Packaged Data=> Main and Supplemental Studies. The current functions only work with the PSID's family files and cross-sectional individual file. For reference, once downloaded, the family files typically have a naming structure like "fam1968.zip", "fam1969.zip", etc. and the individual cross section will be named something like "ind2015er.zip".
+Prior to working with the easyPSID package, users will need to download packaged PSID data for the family files and cross-sectional individual file from https://simba.isr.umich.edu/.
 
 ## Function Overview
 
