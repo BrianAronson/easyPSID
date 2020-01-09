@@ -36,17 +36,27 @@ Alternatively, newest versions of this package can be installed with:
 
 However, prior to working with the easyPSID package, users will need to have already downloaded packaged PSID data for the years that they wish to work with from https://simba.isr.umich.edu/. PSID's packaged data can only be accessed by loading this URL and navigating through the following tabs: Data=> Packaged Data=> Main and Supplemental Studies. The current functions only work with the PSID's family files and cross-sectional individual file. For reference, once downloaded, the family files typically have a naming structure like "fam1968.zip", "fam1969.zip", etc. and the individual cross section will be named something like "ind2015er.zip".
 
-##Function Overview
+## Function Overview
 
-More detailed vignettes for this package are in development, but below is a brief outline of each function in this package:
+Below is a brief outline of each function in this package:
 
-- **unzip\_all\_files**: Unzips all files in the supplied directory.
-- **convert\_to\_rds**: Read PSID fixed width files into R and saves output in .rds format.
-- **rename\_fam\_vars**: Renames all variables in longitudinal family files to their names when they were first available in the dataset.
-- **rename\_ind\_vars**: Renames all variables in longitudinal family files to their names when they were first available in the dataset.
-- **create\_custom\_panel**: Creates a longitudinal dataset with provided family files consisting of a custom set of  variables selected by the user.
-- **create\_extract**: Creates a longitudinal dataset with provided family files consisting of the dataset's N most commonly reoccurring variables.
-- **convert\_from\_rdata**: Converts PSID .rds files to files compatible with STAT, SAS, or SPSS.
-- **find\_name**: Returns the new name (via the rename\_fam\_vars and rename\_ind\_vars functions) of a specified variable.
-- **find\_years**: Returns each year that a given variable is available in the PSID, and its names during those years.
-- **find\_description**: Returns the description of a given variable in the PSID with the variable labels provided by the PSID.
+- **unzip\_all\_files**
+    - Unzips all files in the supplied directory.
+- **convert\_to\_rds**
+    - Read PSID fixed width files into R and saves output in .rds format.
+- **rename\_fam\_vars**
+    - Renames all variables in longitudinal family files to their names when they were first available in the dataset.
+- **rename\_ind\_vars**
+    - Renames all variables in longitudinal family files to their names when they were first available in the dataset.
+- **create\_custom\_panel**
+    - Creates a longitudinal dataset with provided family files consisting of a custom set of  variables selected by the user.
+- **create\_extract**
+    - Creates a longitudinal dataset with provided family files consisting of the dataset's N most commonly reoccurring variables.
+- **convert\_from\_rdata**
+    - Converts PSID .rds files to files compatible with STAT, SAS, or SPSS.
+- **find\_name**
+    - Returns the new name (via the rename\_fam\_vars and rename\_ind\_vars functions) of a specified variable.
+- **find\_years**
+    - Returns each year that a given variable is available in the PSID, and its names during those years.
+- **find\_description**
+    - Returns the description of a given variable in the PSID with the variable labels provided by the PSID.
