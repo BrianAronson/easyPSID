@@ -24,7 +24,7 @@ After downloading multiple waves of the PSID Packaged Data Family Files from htt
         out_direc="C:/PSID/renamed Files",
     )
 
-## Usage
+## Installation
 
 This package can be directly installed via CRAN with `install.packages("easyPSID")`. Alternatively, newest versions of this package can be installed with `devtools::install_github("BrianAronson/easyPSID")`
 
