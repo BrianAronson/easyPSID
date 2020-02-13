@@ -4,8 +4,7 @@
 \alias{rename_ind_vars}
 \title{Renames longitudinal Cross-year Individual variables and saves in long format}
 \usage{
-rename_ind_vars(in_direc, out_direc, only_long_vars = F,
-  cust_vars = NULL)
+rename_ind_vars(in_direc, out_direc, only_long_vars = F, cust_vars = NULL)
 }
 \arguments{
 \item{in_direc}{Directory of PSID Cross-year Individual file .rds file}
