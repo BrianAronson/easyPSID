@@ -7,9 +7,9 @@
 #' @importFrom utils object.size unzip
 #' @examples
 #' unzip_all_files(
-#'     in_direc=system.file("extdata","zip_dir", package = "easyPSID"),
+#'     in_direc=system.file("extdata", "zip_dir", package = "easyPSID"),
 #'     out_direc=tempdir()
-#' }
+#' )
 
 unzip_all_files<-function(in_direc,out_direc){
     #1) Deprecated - Set directories to current directory if none supplied

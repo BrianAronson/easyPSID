@@ -37,11 +37,11 @@ rename_fam_vars<-function(in_direc,out_direc){
                 temp_names[i]<-temp[1] # otherwise replace variable name to name of variable in earliest occurring dataset
           }
     #4) Change names of dataframes
-        names(temp_data)<-temp_names
+        names(temp_data) <- temp_names
     #5) Save output into same directory and with same name as previously
-        dir.create(out_direc,showWarnings = F)
-        saveRDS(temp_data,file=paste(out_direc,"/",file_names2[j],sep = ""))
-        message(paste(file_names2[j],"renamed"))
-        rm(list=c("temp_data"))
+        dir.create(out_direc, showWarnings = F)
+        saveRDS(temp_data, file = paste(out_direc, "/", file_names2[j], sep = ""))
+        message(paste(file_names2[j], "renamed"))
+        rm(list = c("temp_data"))
       }
 }

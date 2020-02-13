@@ -14,4 +14,10 @@ unzip_all_files(in_direc, out_direc)
 \description{
 Unzips all .zip_files files in the specified directory.
 }
+\examples{
+unzip_all_files(
+    in_direc=system.file("extdata", "zip_dir", package = "easyPSID"),
+    out_direc=tempdir()
+)
+}
 \keyword{PSID}
