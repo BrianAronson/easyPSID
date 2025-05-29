@@ -6,7 +6,8 @@
 #' @param in_direc Directory of PSID Cross-year Individual file .rds file
 #' @param out_direc Directory for renamed and transformed PSID Cross-year Individual file to be saved to
 #' @param only_long_vars Keep only longitudinal variables in dataset
-#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "fam_id_68", and "Year"
+#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "ER30002", "fam_id_68", "person_id_68" and "Year"
+#' @param person_id_68 is a unique personal id and follows question 9 in the PSID faq (https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=1)
 #' @keywords PSID
 #' @export
 #' @examples 
@@ -36,7 +37,7 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
     #5) For convenience, create a column in data that is all NAs
         df$colna<-NA
     #6) Identify whether variable is cross-sectional
-        cross<-apply(index,2, function(x) length(x[x!=""]))
+        cross<-apply(index, 2, function(x) length(x[x!=""]))
         cross<-ifelse(cross==1,1,0)
     #7) Identify whether observation was not present during a given wave
         #ER30003 indicates whether non-response in given wave
@@ -54,8 +55,8 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
                 resp[resp>0]<-1
     #8) Subset to custom variables or longitudinal variables
         if(!is.null(cust_vars)){
-          if(!"ER30001" %in% cust_vars){
-            cust_vars<-c(cust_vars,"ER30001")
+          if(any(!c("ER30001","ER30002") %in% cust_vars)){
+            cust_vars<-unique(c(cust_vars,"ER30001","ER30002"))
           }
           indcols<-sapply(cust_vars,function(x) which(index == x,arr.ind = T)[2])
           index<-index[,indcols]  
@@ -109,7 +110,9 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
             Year<-Year[resp==1]
             ind_longdf$Year<-Year
         #d) Add a family id variable
-            fam_id_68<-ind_longdf$ER30001
+            ind_longdf$fam_id_68<-ind_longdf$ER30001
+        #e) Person id following PSID faq 9 (https://psidonline.isr.umich.edu/Guide/FAQ.aspx?Type=1)
+            ind_longdf$person_id_68<-ind_longdf$ER30001*1000 + ind_longdf$ER30002
       #11) Save file
           dir.create(out_direc,showWarnings = F)
           temp_file2<-gsub(".rds","",temp_file2)
