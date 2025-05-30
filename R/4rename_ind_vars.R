@@ -6,7 +6,10 @@
 #' @param in_direc Directory of PSID Cross-year Individual file .rds file
 #' @param out_direc Directory for renamed and transformed PSID Cross-year Individual file to be saved to
 #' @param only_long_vars Keep only longitudinal variables in dataset
-#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "fam_id_68", and "Year"
+#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "fam_id_68","person_id_68","id","ER30001" and "Year"
+#' fam_id_68 is the interview id in 1968
+#' person_id_68 is the person id in 1968
+#' id is the unique identifier using the interview and person ids in 1968 (following faq 9 of PSID)
 #' @keywords PSID
 #' @export
 #' @examples 
@@ -29,12 +32,26 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
         nyears<-dim(data$psid_ind)[2]
         ninds<-nrow(df)
         nrows<-nyears*ninds
+    #3a) Create fam_id_68, person_id_68, id variables
+        df$fam_id_68<-df$ER30001
+        df$person_id_68<-df$ER30002
+        df$id<-df$ER30001*1000+df$ER30002   
+    #3b) Adjust index so that it accounts for the id variables
+        n <- ncol(data$psid_ind)
+        new_rows <- as.data.frame(matrix(c(rep("fam_id_68", n), rep("person_id_68", n), rep("id", n)), 3, byrow = TRUE), stringsAsFactors = TRUE)
+        colnames(new_rows) <- colnames(data$psid_ind)
+        for (i in seq_along(data$psid_ind)) {
+            lv <- union(levels(data$psid_ind[[i]]), levels(new_rows[[i]]))
+            data$psid_ind[[i]] <- factor(data$psid_ind[[i]], levels = lv)
+            new_rows[[i]] <- factor(new_rows[[i]], levels = lv)
+        }
+        data$psid_ind <- rbind(data$psid_ind, new_rows)
     #4) Create transposed version of data$psid_ind, sorted by time first in dataset
         early_name<-apply(data$psid_ind,1,function(x) x[x!=""][1])
         index<-data$psid_ind[order(early_name),]
         index<-t(index)
     #5) For convenience, create a column in data that is all NAs
-        df$colna<-NA
+        df$colna<-NA                         
     #6) Identify whether variable is cross-sectional
         cross<-apply(index,2, function(x) length(x[x!=""]))
         cross<-ifelse(cross==1,1,0)
@@ -54,8 +71,8 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
                 resp[resp>0]<-1
     #8) Subset to custom variables or longitudinal variables
         if(!is.null(cust_vars)){
-          if(!"ER30001" %in% cust_vars){
-            cust_vars<-c(cust_vars,"ER30001")
+          if(!any(c("fam_id_68","person_id_68","id","ER30001") %in% cust_vars)){
+            cust_vars<-unique(c(cust_vars,c("fam_id_68","person_id_68","id","ER30001")))
           }
           indcols<-sapply(cust_vars,function(x) which(index == x,arr.ind = T)[2])
           index<-index[,indcols]  
@@ -108,8 +125,6 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
             Year<-rep(uyears,each=ninds)
             Year<-Year[resp==1]
             ind_longdf$Year<-Year
-        #d) Add a family id variable
-            fam_id_68<-ind_longdf$ER30001
       #11) Save file
           dir.create(out_direc,showWarnings = F)
           temp_file2<-gsub(".rds","",temp_file2)
