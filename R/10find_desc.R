@@ -17,7 +17,3 @@ find_description<-function(variables){
     #4) Otherwise, print variables name and description
         return(varrow)
 }
-  
-
-
-                 

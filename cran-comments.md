@@ -1,22 +1,26 @@
-This resubmission addresses the following concerns:
-
->   Found the following (possibly) invalid URLs:
->      URL: https://cran.r-project.org/web/packages/easyPSID/index.html
->        From: README.md
->        Status: 200
->        Message: OK
->        CRAN URL not in canonical form
->      The canonical URL of the CRAN page for a package is
->        https://CRAN.R-project.org/package=pkgname
-
-Done. I have changed the URL to https://CRAN.R-project.org/package=easyPSID
-
 ## Test environments
-* local Windows 10 install, R 3.6.0
-* x86_64-redhat-linux-gnu, R 3.5.2
+
+* local Windows 11, R 4.3.1 (preliminary check)
+* win-builder, R-release 4.6.0 (pending)
+* win-builder, R-devel 4.7.0 (pending)
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs. 
+
+The preliminary local check completed with 0 errors, 1 warning, and 2 notes.
+The warning and notes were caused by the local toolchain: `LaF` was built under
+R 4.3.3 while the check used R 4.3.1, the system time could not be verified,
+and `tidy` was unavailable for optional HTML validation.
+
+This section will be replaced with the current R-release and R-devel results
+before submission.
+
+## Changes in this version
+
+This release updates the internal PSID cross-year index through the 2023 wave,
+supports the current packaged-download file layout, preserves stable individual
+identifiers during long reshaping, and fixes lookups for variables occurring in
+only one wave. It also adds tests covering those behaviors.
 
 ## Downstream dependencies
+
 There are currently no downstream dependencies for this package
