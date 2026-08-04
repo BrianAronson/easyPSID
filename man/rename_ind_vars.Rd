@@ -13,7 +13,7 @@ rename_ind_vars(in_direc, out_direc, only_long_vars = F, cust_vars = NULL)
 
 \item{only_long_vars}{Keep only longitudinal variables in dataset}
 
-\item{cust_vars}{Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "fam_id_68", and "Year"}
+\item{cust_vars}{Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "ER30002", "fam_id_68", and "Year"}
 }
 \description{
 Renames all repeated variables in the Cross-year Individual file so that matching variables across waves have the same name, and transforms the resulting dataset into long format. The longitudinal file does not include rows for respondents who were missing in a given wave, and cross-sectional variables are marked as NA during waves when they were not asked. In addition, the resulting file adds two variables for ease of use: "Year" and "fam_id_68". 

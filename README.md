@@ -6,27 +6,38 @@
 
 ## Example
 
-After downloading multiple waves of the PSID Packaged Data Family Files from https://simba.isr.umich.edu/, a common use of easyPSID is to unzip each wave of the family files, convert them to .rds format, rename all longitudinal variables to consistent names across years, and save the resulting renamed datasets to .rds format. This can be done as follows (assuming the PSID files were saved into `C:/PSID/Zip Files`):
+After downloading multiple waves of the PSID Packaged Data Family Files from https://simba.isr.umich.edu/, a common use of easyPSID is to unzip each wave of the family files, convert them to .rds format, rename all longitudinal variables to consistent names across years, and save the resulting renamed datasets to .rds format. The development version's cross-year reference currently covers the 1968-2023 waves. This can be done as follows (assuming the PSID files were saved into `C:/PSID/Zip Files`):
 
     library(easyPSID)
     unzip_all_files(
         in_direc="C:/PSID/Zip Files",
-        out_direc="C:/PSID/Unzipped Files",
+        out_direc="C:/PSID/Unzipped Files"
     )
     convert_to_rds(
         in_direc="C:/PSID/Unzipped Files",
-        out_direc="C:/PSID/rds Files",
+        out_direc="C:/PSID/rds Files"
     )
     rename_fam_vars(
         in_direc="C:/PSID/rds Files",
-        out_direc="C:/PSID/renamed Files",
+        out_direc="C:/PSID/renamed Files"
     )
+
+`convert_to_rds()` expects the fixed-width ASCII `.txt` file and matching Stata
+`.do` definition file included in each PSID packaged-data ZIP. It does not read
+Stata `.dta` files. If you already have a `.dta` file, import it with a Stata
+reader such as `haven::read_dta()`, preserve the original PSID variable names,
+and save the resulting data frame with `saveRDS()` before calling a renaming
+function.
 
 ## Installation
 
 This package can be directly installed via CRAN with `install.packages("easyPSID")`. Alternatively, newest versions of this package can be installed with `devtools::install_github("BrianAronson/easyPSID")`
 
 Prior to working with the easyPSID package, users will need to download packaged PSID data for the family files and cross-sectional individual file from https://simba.isr.umich.edu/.
+
+The small files bundled under `inst/extdata` are excerpts used to exercise the
+package examples. Users must register with PSID and acquire full public-release
+data directly from PSID.
 
 ## Function Overview
 
@@ -39,7 +50,7 @@ Below is a brief outline of each function in this package:
 - **rename\_fam\_vars**
     - Renames all variables in longitudinal family files to their names when they were first available in the dataset.
 - **rename\_ind\_vars**
-    - Renames all variables in longitudinal family files to their names when they were first available in the dataset.
+    - Reshapes the cross-year Individual File to long format and gives recurring variables their earliest names while retaining `ER30001` and `ER30002` as stable person identifiers.
 - **create\_custom\_panel**
     - Creates a longitudinal dataset with provided family files consisting of a custom set of  variables selected by the user.
 - **create\_extract**

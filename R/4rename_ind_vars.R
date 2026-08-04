@@ -6,7 +6,7 @@
 #' @param in_direc Directory of PSID Cross-year Individual file .rds file
 #' @param out_direc Directory for renamed and transformed PSID Cross-year Individual file to be saved to
 #' @param only_long_vars Keep only longitudinal variables in dataset
-#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "fam_id_68", and "Year"
+#' @param cust_vars Custom variables to keep in dataset (as character vector). Output will always include "ER30001", "ER30002", "fam_id_68", and "Year"
 #' @keywords PSID
 #' @export
 #' @examples 
@@ -21,8 +21,12 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
         # in_direc<-ifelse(is.null(in_direc),getwd(),in_direc)
         # out_direc<-ifelse(is.null(out_direc),getwd(),out_direc)
     #2) Load rds file
-        temp_file<-list.files(path=in_direc,pattern= c("IND.*\\.rds$" ),full.names=T)[1]
-        temp_file2<-list.files(path=in_direc,pattern= c("IND.*\\.rds$" ))[1]
+        temp_files<-list.files(path=in_direc,pattern= c("^IND.*\\.rds$" ),full.names=T)
+        if(length(temp_files)==0L){
+          stop("No cross-year Individual File .rds file was found in `in_direc`.",call.=FALSE)
+        }
+        temp_file<-temp_files[1]
+        temp_file2<-basename(temp_file)
         df<-readRDS(temp_file)
     #3) Identify dimensions of eventual dataframe
         ncols<-dim(data$psid_ind)[1]
@@ -40,25 +44,32 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
         cross<-ifelse(cross==1,1,0)
     #7) Identify whether observation was not present during a given wave
         #ER30003 indicates whether non-response in given wave
-            ER30003<-which(index=="ER30003",arr.ind = T)[2]
+            response_matches<-which(index=="ER30003",arr.ind = T)
+            ER30003<-response_matches[1,"col"]
             #i) Find corresponding variable names
                 varnames<-as.vector(index[,ER30003])
             #ii) Replace missing variable names with colna
-                varnames[varnames==""]<-"colna"
+                varnames[varnames=="" | !varnames %in% names(df)]<-"colna"
             #iii) Pull out those column names and convert to vector
                 resp<-vector()
                 for(j in 1:length(varnames)){
                   resp<-c(resp,df[,varnames[j]])
                 }
             #iv) Remove missing individuals
+                resp[is.na(resp)]<-0
                 resp[resp>0]<-1
     #8) Subset to custom variables or longitudinal variables
         if(!is.null(cust_vars)){
-          if(!"ER30001" %in% cust_vars){
-            cust_vars<-c(cust_vars,"ER30001")
-          }
-          indcols<-sapply(cust_vars,function(x) which(index == x,arr.ind = T)[2])
-          index<-index[,indcols]  
+          required_ids<-c("ER30001","ER30002")
+          cust_vars<-unique(c(cust_vars,required_ids))
+          indcols<-vapply(cust_vars,function(x){
+            matches<-which(index==x,arr.ind=TRUE)
+            if(nrow(matches)==0L){
+              stop(paste0("Variable `",x,"` was not found in the Individual File index."),call.=FALSE)
+            }
+            matches[1,"col"]
+          },integer(1))
+          index<-index[,indcols]
         }else if(only_long_vars==T){
           index<-index[,cross==0]
         }
@@ -66,7 +77,9 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
         #i) Find corresponding variable names across waves
             ind_longdf<-lapply(as.data.frame(index),as.vector)
         #ii) Replace missing variable names with colna
-            ind_longdf<-lapply(ind_longdf,function(x) ifelse(x=="","colna",x))
+            ind_longdf<-lapply(ind_longdf,function(x){
+              ifelse(x=="" | !x %in% names(df),"colna",x)
+            })
         #iii) Pull out those columns
             ind_longdf<-lapply(ind_longdf,function(x) df[,x])
         #iv) Convert columns to single vector
@@ -109,7 +122,7 @@ rename_ind_vars<-function(in_direc,out_direc,only_long_vars=F,cust_vars=NULL){
             Year<-Year[resp==1]
             ind_longdf$Year<-Year
         #d) Add a family id variable
-            fam_id_68<-ind_longdf$ER30001
+            ind_longdf$fam_id_68<-ind_longdf$ER30001
       #11) Save file
           dir.create(out_direc,showWarnings = F)
           temp_file2<-gsub(".rds","",temp_file2)

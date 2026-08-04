@@ -1,10 +1,10 @@
 #' Convert all PSID files from .txt format to .rds format
-#' @description Converts all PSID fixed width format .txt files in a selected directory into .rds format. Importantly, this function assumes that all files contained in the original PSID .zip files (especially those ending in .do) are present in the same directory as the PSID .txt files, and that all files within that directory have the same names as when first unzipped.
+#' @description Converts all PSID fixed width format .txt files in a selected directory into .rds format. This function expects the ASCII .txt file and matching Stata .do definition file contained in each PSID packaged-data .zip download. It does not read Stata .dta files. All files must retain the names they had when first unzipped.
 #' @param in_direc Directory containing unzipped PSID .txt and .do files
 #' @param out_direc Directory to place PSID .rds files into
 #' @keywords PSID
 #' @export
-#' @importFrom stringr str_extract str_extract_all
+#' @importFrom stringr str_extract str_match str_match_all
 #' @importFrom LaF laf_open_fwf
 #' @examples
 #' convert_to_rds(
@@ -12,63 +12,93 @@
 #'     out_direc=tempdir()
 #' )
 
-convert_to_rds<-function(in_direc,out_direc){
-    #1 - Deprecated - Specify directory
-        # in_direc<-ifelse(is.null(in_direc),getwd(),in_direc)
-        # out_direc<-ifelse(is.null(out_direc),getwd(),out_direc)
-    #2 - Read do and txt files
-        do_files<-c(list.files(path=in_direc,pattern= c("*\\.do$" ),full.names=T))
-        txt_files<-c(list.files(path=in_direc,pattern= c("*\\.txt$" ),full.names=T))
-        txt_files2<-c(list.files(path=in_direc,pattern= c("*\\.txt$" )))
-    #3 - Convert Stata .do files to R syntax
-      for(i in 1:length(do_files)){
-          #a) Read stata code
-              stata_code <- readLines(do_files[i])
-          #b) Keep relevant lines
-              code_start <- min(grep('infix', stata_code))
-              code_end <- min(grep('using', stata_code))-1
-              stata_keep <- stata_code[code_start:code_end]
-              stata_keep<-stata_keep[-1] #(just contains "infix")
-          #c) Extract all variable names
-              variable_names <- unlist(str_extract_all(stata_keep, '[A-Z][a-zA-Z0-9_]+'))
-          #d) Extract all variable labels
-              #i) Find where relevant code starts
-                  labs_start <- min(grep('label', stata_code))
-                  labs_end <- max(grep('label', stata_code))
-                  stata_labs <- stata_code[labs_start:labs_end]
-              #ii) Grab strings between quotes
-                  var_descriptions<-vector(length=length(stata_labs))
-                  for(j in 1:length(var_descriptions)){
-                      temp<-str_extract_all(stata_labs[j],"\"(.+)\"")[[1]]
-                      #Remove quotes
-                          var_descriptions[j]<-gsub("\"","",temp)
-                      #Remove extra spaces
-                          var_descriptions[j]<-gsub("  ","",var_descriptions[j])
-                  }
-          #iii) Extract all column indices
-              temp_columns<-unlist(str_extract_all(stata_keep,'[0-9]+ [/-] [0-9]+'))
-          #iv) Change column ranges to column counts
-              columns<-vector()
-              for(j in 1:length(temp_columns)){
-                  a<-temp_columns[j]
-                  b<-as.numeric(unlist(str_extract_all(a,'[0-9]+')))
-                  columns[j]<-b[2]-b[1]+1
-              }
-    #4) Use converted stata code to read in txt files and use stata variable labels
-          temp_data <- laf_open_fwf(txt_files[i], column_widths = columns,column_types = rep("double",length(columns)))
-          temp_data <- temp_data[,]
-          names(temp_data) <- variable_names
-          attr(temp_data,"var.labels")<-var_descriptions
-    #5) Save files as "[Type] [Year].rds"
-        #a) Determine file name
-            temp_year<-str_extract(txt_files2[i],'[0-9]+')
-            temp_heading<-substr(txt_files2[i],1,3)
-            temp_name<-paste(temp_heading,temp_year,".rds",sep="")
-        #b) Save file
-            dir.create(out_direc,showWarnings = F)
-            saveRDS(object=temp_data,file=paste(out_direc,"/",temp_name,sep = ""))
-        #c) Notify user of progress
-            message(paste(temp_name,"Converted"))
-      }
+convert_to_rds <- function(in_direc, out_direc) {
+    txt_files <- list.files(
+        path = in_direc,
+        pattern = "\\.txt$",
+        full.names = TRUE,
+        ignore.case = TRUE
+    )
+    if (length(txt_files) == 0L) {
+        stop("No fixed-width .txt files were found in `in_direc`.", call. = FALSE)
+    }
+
+    do_files <- list.files(
+        path = in_direc,
+        pattern = "\\.do$",
+        full.names = TRUE,
+        ignore.case = TRUE
+    )
+    do_stems <- tolower(tools::file_path_sans_ext(basename(do_files)))
+    dir.create(out_direc, recursive = TRUE, showWarnings = FALSE)
+
+    for (txt_file in txt_files) {
+        txt_name <- basename(txt_file)
+        txt_stem <- tools::file_path_sans_ext(txt_name)
+        matching_do_files <- do_files[do_stems == tolower(txt_stem)]
+        if (length(matching_do_files) != 1L) {
+            stop(
+                paste0(
+                    "Expected exactly one matching .do file for `", txt_name,
+                    "`, but found ", length(matching_do_files), "."
+                ),
+                call. = FALSE
+            )
+        }
+
+        stata_code <- readLines(matching_do_files, warn = FALSE)
+        infix_line <- grep("^\\s*infix\\b", stata_code, ignore.case = TRUE)[1L]
+        using_lines <- grep("^\\s*using\\b", stata_code, ignore.case = TRUE)
+        using_line <- using_lines[using_lines > infix_line][1L]
+        if (is.na(infix_line) || is.na(using_line)) {
+            stop(
+                paste0("Could not locate the infix definition in `", basename(matching_do_files), "`."),
+                call. = FALSE
+            )
+        }
+
+        infix_code <- paste(stata_code[(infix_line + 1L):(using_line - 1L)], collapse = " ")
+        field_pattern <- paste0(
+            "(?:\\b(?:byte|int|long|float|double|str[0-9]+)\\s+)?",
+            "([A-Za-z][A-Za-z0-9_]*)\\s+([0-9]+)\\s*-\\s*([0-9]+)"
+        )
+        fields <- str_match_all(infix_code, field_pattern)[[1L]]
+        if (nrow(fields) == 0L) {
+            stop(
+                paste0("No fixed-width fields were found in `", basename(matching_do_files), "`."),
+                call. = FALSE
+            )
+        }
+
+        variable_names <- fields[, 2L]
+        columns <- as.integer(fields[, 4L]) - as.integer(fields[, 3L]) + 1L
+
+        label_pattern <- paste0(
+            "^\\s*label\\s+variable\\s+([A-Za-z][A-Za-z0-9_]*)\\s+",
+            "\"(.*)\"\\s*;?\\s*$"
+        )
+        label_fields <- str_match(stata_code, label_pattern)
+        label_fields <- label_fields[!is.na(label_fields[, 2L]), , drop = FALSE]
+        labels_by_name <- stats::setNames(
+            trimws(label_fields[, 3L]),
+            label_fields[, 2L]
+        )
+        variable_labels <- unname(labels_by_name[variable_names])
+
+        converted_data <- laf_open_fwf(
+            txt_file,
+            column_widths = columns,
+            column_types = rep("double", length(columns))
+        )
+        converted_data <- converted_data[, ]
+        names(converted_data) <- variable_names
+        attr(converted_data, "var.labels") <- variable_labels
+
+        file_year <- str_extract(txt_name, "[0-9]+")
+        file_type <- toupper(substr(txt_name, 1L, 3L))
+        output_name <- paste0(file_type, file_year, ".rds")
+        saveRDS(converted_data, file = file.path(out_direc, output_name))
+        message(output_name, " converted")
+    }
 }
 
