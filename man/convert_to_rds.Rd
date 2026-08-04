@@ -12,7 +12,7 @@ convert_to_rds(in_direc, out_direc)
 \item{out_direc}{Directory to place PSID .rds files into}
 }
 \description{
-Converts all PSID fixed width format .txt files in a selected directory into .rds format. Importantly, this function assumes that all files contained in the original PSID .zip files (especially those ending in .do) are present in the same directory as the PSID .txt files, and that all files within that directory have the same names as when first unzipped.
+Converts all PSID fixed width format .txt files in a selected directory into .rds format. This function expects the ASCII .txt file and matching Stata .do definition file contained in each PSID packaged-data .zip download. It does not read Stata .dta files. All files must retain the names they had when first unzipped.
 }
 \examples{
 convert_to_rds(

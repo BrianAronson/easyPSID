@@ -3,3 +3,7 @@
 ^cran\-comments\.md$
 ^LICENSE.md$
 ^CRAN-RELEASE$
+^data-raw$
+^\.r-lib$
+^easyPSID_[0-9.]+\.tar\.gz$
+^easyPSID\.Rcheck$

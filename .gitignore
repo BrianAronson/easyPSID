@@ -1,1 +1,4 @@
 .Rproj.user
+.r-lib/
+*.Rcheck/
+*.tar.gz
